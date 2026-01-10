@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch:*)",
+      "Bash(powershell -File:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npm --version:*)",
+      "Bash(del:*)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(if not exist \"frontend\\\\src\\\\app\\\\login\" mkdir \"frontend\\\\src\\\\app\\\\login\")",
+      "Bash(find:*)",
+      "Bash(curl:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNDljYWE3NC0zNGUyLTQ4YTEtOGZmYS0xNjAwMTZiOGY3OTgiLCJpYXQiOjE3Njc4MTE4MDksImV4cCI6MTc2Nzg5ODIwOX0.0CwYJohNPnax9k-BAiPAfs_oflPpx4HMutM_-3kCnFc\")",
+      "Bash(findstr:*)",
+      "Bash(timeout:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(powershell:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

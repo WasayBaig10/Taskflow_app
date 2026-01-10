@@ -1,0 +1,25 @@
+{
+  "name": "to-do-nextjs",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "packageManager": "npm@11.7.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "turbo": "^2.7.3",
+    "typescript": "^5.9.3"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ]
+}
