@@ -24,7 +24,8 @@
       "Bash(git commit:*)",
       "Bash(git branch:*)",
       "Bash(git push:*)",
-      "Bash(vercel login:*)"
+      "Bash(vercel login:*)",
+      "Bash(dir:*)"
     ]
   }
 }

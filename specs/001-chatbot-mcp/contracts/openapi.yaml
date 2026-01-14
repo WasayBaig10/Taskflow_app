@@ -1,0 +1,255 @@
+openapi: 3.0.3
+info:
+  title: Todo Chat API
+  description: AI-powered chatbot interface for Todo task management
+  version: 1.0.0
+  contact:
+    name: TaskFlow API Support
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: https://api.taskflow.example.com
+    description: Production server
+
+paths:
+  /api/{user_id}/chat:
+    post:
+      summary: Send message to AI chatbot
+      description: |
+        Sends a user message to the AI chatbot and receives a response.
+        The AI can perform task operations (create, read, update, delete) using MCP tools.
+        All operations are scoped to the authenticated user.
+      operationId: sendMessage
+      tags:
+        - Chat
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: |
+            UUID of the authenticated user. Must match the 'sub' claim in the JWT token.
+          schema:
+            type: string
+            format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+            examples:
+              newConversation:
+                summary: Start new conversation
+                value:
+                  message: "Add a task to buy groceries"
+              existingConversation:
+                summary: Continue existing conversation
+                value:
+                  conversation_id: "550e8400-e29b-41d4-a716-446655440001"
+                  message: "Mark the grocery task as complete"
+      responses:
+        '200':
+          description: Successful chat response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+              examples:
+                taskCreated:
+                  summary: Task created successfully
+                  value:
+                    conversation_id: "550e8400-e29b-41d4-a716-446655440001"
+                    message:
+                      id: "550e8400-e29b-41d4-a716-446655440002"
+                      role: assistant
+                      content: "I've created a task titled 'Buy groceries'. Is there anything else you'd like to add?"
+                      created_at: "2026-01-11T12:30:45Z"
+                    tasks:
+                      - id: "550e8400-e29b-41d4-a716-446655440003"
+                        title: "Buy groceries"
+                        description: null
+                        completed: false
+                        created_at: "2026-01-11T12:30:44Z"
+                taskCompleted:
+                  summary: Task marked complete
+                  value:
+                    conversation_id: "550e8400-e29b-41d4-a716-446655440001"
+                    message:
+                      id: "550e8400-e29b-41d4-a716-446655440004"
+                      role: assistant
+                      content: "Done! I've marked 'Buy groceries' as complete."
+                      created_at: "2026-01-11T12:35:22Z"
+                    tasks:
+                      - id: "550e8400-e29b-41d4-a716-446655440003"
+                        title: "Buy groceries"
+                        description: null
+                        completed: true
+                        created_at: "2026-01-11T12:30:44Z"
+                        completed_at: "2026-01-11T12:35:21Z"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                emptyMessage:
+                  summary: Empty message
+                  value:
+                    error: "message cannot be empty"
+                invalidConversation:
+                  summary: Invalid conversation ID
+                  value:
+                    error: "conversation_id must be a valid UUID"
+        '401':
+          description: Unauthorized - missing or invalid JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Unauthorized: Missing or invalid authentication token"
+        '403':
+          description: Forbidden - conversation belongs to different user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Forbidden: Conversation not found or access denied"
+        '500':
+          description: Internal server error - AI service failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "AI service temporarily unavailable. Please try again later."
+        '503':
+          description: Service unavailable - rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Rate limit exceeded. Please wait before sending another message."
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token from Better Auth with 'sub' claim containing user UUID
+
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - message
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+          description: |
+            Existing conversation ID to continue. Omit to start a new conversation.
+          example: "550e8400-e29b-41d4-a716-446655440001"
+        message:
+          type: string
+          minLength: 1
+          maxLength: 5000
+          description: User message content (plaintext)
+          example: "Add a task to buy groceries"
+
+    ChatResponse:
+      type: object
+      required:
+        - conversation_id
+        - message
+        - tasks
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+          description: Conversation ID (new or existing)
+        message:
+          type: object
+          required:
+            - id
+            - role
+            - content
+            - created_at
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: Unique message identifier
+            role:
+              type: string
+              enum: [assistant]
+              description: Always 'assistant' for responses
+            content:
+              type: string
+              description: AI response message content
+            created_at:
+              type: string
+              format: date-time
+              description: Message timestamp (ISO 8601)
+        tasks:
+          type: array
+          description: |
+            Updated list of user's tasks after any tool operations.
+            May be empty if no task operations were performed.
+          items:
+            $ref: '#/components/schemas/Task'
+
+    Task:
+      type: object
+      required:
+        - id
+        - title
+        - completed
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique task identifier
+        title:
+          type: string
+          description: Task title
+        description:
+          type: string
+          nullable: true
+          description: Detailed task description (optional)
+        completed:
+          type: boolean
+          description: Task completion status
+        created_at:
+          type: string
+          format: date-time
+          description: Task creation timestamp (ISO 8601)
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Task completion timestamp (null if not completed)
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+
+tags:
+  - name: Chat
+    description: AI chatbot operations

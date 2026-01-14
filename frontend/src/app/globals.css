@@ -1,3 +1,267 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', system-ui, sans-serif;
+    --font-geist: system-ui, sans-serif;
+    --font-comfortaa: 'Comfortaa', cursive;
+  }
+
+  * {
+    border-color: theme('colors.white.10');
+  }
+
+  body {
+    @apply bg-obsidian-950 text-gray-100 font-sans antialiased;
+    background-image: radial-gradient(
+      ellipse 80% 50% at 50% -20%,
+      rgba(120, 119, 198, 0.15),
+      transparent
+    );
+    background-attachment: fixed;
+  }
+
+  /* Glassmorphism base styles */
+  .glass {
+    @apply bg-glass-bg backdrop-blur-md border border-glass-border;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.01) 100%
+    );
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .glass-card {
+    @apply glass rounded-2xl p-6 transition-all duration-300;
+  }
+
+  .glass-card:hover {
+    @apply border-white/10 shadow-glow-sm;
+    transform: translateY(-2px);
+  }
+
+  /* Priority indicators */
+  .priority-low {
+    @apply text-priority-low shadow-neon-green;
+  }
+
+  .priority-medium {
+    @apply text-priority-medium shadow-neon-orange;
+  }
+
+  .priority-high {
+    @apply text-priority-high shadow-neon-red;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-obsidian-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-700 rounded-full hover:bg-gray-600;
+  }
+
+  /* Smooth transitions for theme changes */
+  * {
+    @apply transition-colors duration-200;
+  }
+
+  /* Focus styles */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-obsidian-950;
+  }
+}
+
+@layer components {
+  /* Glassmorphic button styles */
+  .btn-glass {
+    @apply glass px-4 py-2 rounded-lg font-medium text-sm;
+    @apply hover:bg-glass-hover hover:shadow-glow-sm;
+    @apply active:scale-95 transition-all duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white;
+    @apply px-4 py-2 rounded-lg font-medium text-sm;
+    @apply hover:shadow-lg active:scale-95;
+    @apply transition-all duration-200;
+  }
+
+  .btn-ghost {
+    @apply text-gray-400 hover:text-white hover:bg-glass-hover;
+    @apply px-3 py-2 rounded-lg text-sm font-medium;
+    @apply transition-all duration-200;
+  }
+
+  /* Input styles */
+  .input-glass {
+    @apply bg-obsidian-900/50 backdrop-blur-sm;
+    @apply border border-glass-border rounded-lg;
+    @apply px-4 py-2.5 text-sm text-white placeholder-gray-500;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500;
+    @apply transition-all duration-200;
+  }
+
+  /* Task card styles */
+  .task-card {
+    @apply glass rounded-xl p-4 transition-all duration-300;
+  }
+
+  .task-card:hover {
+    @apply border-white/10 shadow-glass;
+    transform: translateY(-2px) scale(1.01);
+  }
+
+  /* Checkbox custom styles */
+  .checkbox-glass {
+    @apply w-5 h-5 rounded border-2 border-gray-600;
+    @apply appearance-none cursor-pointer transition-all duration-200;
+    @apply checked:bg-blue-500 checked:border-blue-500;
+    position: relative;
+  }
+
+  .checkbox-glass:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  }
+
+  /* Strikethrough animation */
+  .strikethrough {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .strikethrough::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .strikethrough.completed::after {
+    transform: scaleX(1);
+  }
+
+  /* Toast animation */
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  .toast-enter {
+    animation: slideInRight 0.3s ease-out;
+  }
+
+  .toast-exit {
+    animation: fadeOut 0.2s ease-out forwards;
+  }
+
+  /* Loading shimmer */
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .shimmer {
+    animation: shimmer 2s infinite;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 100%
+    );
+    background-size: 1000px 100%;
+  }
+}
+
+@layer utilities {
+  /* Text gradient utilities */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      135deg,
+      #60a5fa 0%,
+      #a78bfa 50%,
+      #f472b6 100%
+    );
+  }
+
+  /* Glow effects */
+  .glow-sm {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  }
+
+  .glow-md {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+  }
+
+  .glow-lg {
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+  }
+
+  /* Glass morphism utilities */
+  .glass-strong {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20;
+  }
+
+  .glass-light {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  /* Neon glow utilities */
+  .neon-green-glow {
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+  }
+
+  .neon-orange-glow {
+    box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+  }
+
+  .neon-red-glow {
+    box-shadow: 0 0 10px rgba(220, 20, 60, 0.5);
+  }
+
+  /* Micro-interaction press effect */
+  .press-effect {
+    transition: transform 0.1s ease;
+  }
+
+  .press-effect:active {
+    transform: scale(0.97);
+  }
+}

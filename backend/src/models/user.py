@@ -10,6 +10,7 @@ from uuid import UUID, uuid4
 
 if TYPE_CHECKING:
     from src.models.task import TaskTable
+    from src.models.conversation import ConversationTable
 
 
 class UserTable(SQLModel, table=True):
@@ -56,6 +57,10 @@ class UserTable(SQLModel, table=True):
 
     # Relationships
     tasks: List["TaskTable"] = Relationship(
+        back_populates="user",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
+    conversations: List["ConversationTable"] = Relationship(
         back_populates="user",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )

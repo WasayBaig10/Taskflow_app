@@ -33,35 +33,54 @@ async function apiRequest<T>(
     headers["Authorization"] = `Bearer ${token}`
   }
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-    // Still include cookies for any cookie-based auth fallback
-    credentials: "include",
-  })
-
-  // Handle 401 Unauthorized
-  if (response.status === 401) {
-    const error: ErrorResponse = await response.json()
-    throw new Error(error.error.message || "Unauthorized - Please log in")
+  let response: Response
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers,
+      // Still include cookies for any cookie-based auth fallback
+      credentials: "include",
+    })
+  } catch (error) {
+    // Network error (e.g., backend not running, CORS issue)
+    if (error instanceof TypeError && error.message === "Failed to fetch") {
+      throw new Error(`Unable to connect to backend at ${API_URL}. Please ensure the backend server is running.`)
+    }
+    throw error
   }
 
-  // Handle 403 Forbidden
-  if (response.status === 403) {
-    const error: ErrorResponse = await response.json()
-    throw new Error(error.error.message || "Forbidden - You don't have access to this resource")
-  }
-
-  // Handle 404 Not Found
-  if (response.status === 404) {
-    const error: ErrorResponse = await response.json()
-    throw new Error(error.error.message || "Resource not found")
-  }
-
-  // Handle other errors
+  // Handle error responses - extract message from different response formats
   if (!response.ok) {
-    const error: ErrorResponse = await response.json()
-    throw new Error(error.error.message || "An error occurred")
+    let errorMessage = "An error occurred"
+    try {
+      const data = await response.json()
+      // FastAPI returns { "detail": "..." } for validation errors
+      // Our custom errors return { "error": { "message": "..." } }
+      // Chat endpoint returns { "detail": { "error": "...", "message": "...", ... } }
+      if (typeof data === "object" && data !== null) {
+        const detail = (data as Record<string, unknown>).detail
+
+        // Handle nested detail object (from chat endpoint)
+        if (typeof detail === "object" && detail !== null) {
+          errorMessage = (detail as Record<string, unknown>).message as string ||
+                        (detail as Record<string, unknown>).error as string ||
+                        errorMessage
+        }
+        // Handle string detail (standard FastAPI error)
+        else if (typeof detail === "string") {
+          errorMessage = detail
+        }
+        // Handle ErrorResponse format
+        else {
+          errorMessage = (data as ErrorResponse).error?.message ||
+                        errorMessage
+        }
+      }
+    } catch {
+      // If parsing JSON fails, use status text
+      errorMessage = response.statusText || errorMessage
+    }
+    throw new Error(errorMessage)
   }
 
   return response.json()
@@ -143,7 +162,7 @@ export async function completeTask(
 export async function updateTask(
   userId: string,
   taskId: string,
-  data: { title?: string; description?: string },
+  data: { title?: string; description?: string; priority?: "low" | "medium" | "high" },
   token?: string
 ): Promise<Task> {
   return apiRequest<Task>(`/api/${userId}/tasks/${taskId}`, {
@@ -151,4 +170,88 @@ export async function updateTask(
     body: JSON.stringify(data),
   }, token)
 }
+
+// =============================================================================
+// Chat API Client (T060)
+// Per @specs/001-chatbot-mcp/contracts/openapi.yaml
+// =============================================================================
+
+/**
+ * Chat message types
+ */
+export type ChatMessageRole = "user" | "assistant"
+
+export interface ChatMessage {
+  id: string
+  role: ChatMessageRole
+  content: string
+  created_at: string
+}
+
+export interface TaskSummary {
+  id: string
+  title: string
+  description: string | null
+  completed: boolean
+}
+
+export interface ChatRequest {
+  conversation_id?: string
+  message: string
+}
+
+export interface ChatResponse {
+  conversation_id: string
+  message: ChatMessage
+  tasks?: TaskSummary[]
+}
+
+/**
+ * Send a chat message to the AI assistant.
+ *
+ * Per @specs/001-chatbot-mcp/contracts/openapi.yaml
+ *
+ * @param userId - User ID from Better Auth session
+ * @param data - Chat request with optional conversation_id and message
+ * @param token - JWT token from Better Auth session
+ */
+export async function sendChatMessage(
+  userId: string,
+  data: ChatRequest,
+  token?: string
+): Promise<ChatResponse> {
+  return apiRequest<ChatResponse>(`/api/${userId}/chat`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  }, token)
+}
+
+/**
+ * List all conversations for a user.
+ *
+ * @param userId - User ID from Better Auth session
+ * @param token - JWT token from Better Auth session
+ */
+export async function listConversations(
+  userId: string,
+  token?: string
+): Promise<{ conversations: Array<{ id: string; title: string; created_at: string; updated_at: string }>; count: number }> {
+  return apiRequest<{ conversations: Array<{ id: string; title: string; created_at: string; updated_at: string }>; count: number }>(`/api/${userId}/conversations`, {}, token)
+}
+
+/**
+ * Get messages in a conversation.
+ *
+ * @param userId - User ID from Better Auth session
+ * @param conversationId - Conversation ID
+ * @param token - JWT token from Better Auth session
+ */
+export async function getConversationMessages(
+  userId: string,
+  conversationId: string,
+  token?: string
+): Promise<{ conversation_id: string; messages: ChatMessage[]; count: number }> {
+  return apiRequest<{ conversation_id: string; messages: ChatMessage[]; count: number }>(`/api/${userId}/conversations/${conversationId}/messages`, {}, token)
+}
+
 

@@ -66,8 +66,8 @@ function HoverFooter() {
   ];
 
   return (
-    <footer className="bg-gray-100 dark:bg-[#0F0F11]/10 relative h-fit rounded-3xl overflow-hidden m-4 sm:m-6 lg:m-8">
-      <div className="max-w-7xl mx-auto p-8 sm:p-12 lg:p-14 z-40 relative">
+    <footer className="font-comfortaa bg-gray-100 dark:bg-[#0F0F11]/10 relative h-fit rounded-3xl overflow-hidden m-4 sm:m-6 lg:m-8">
+      <div className=" max-w-7xl mx-auto p-8 sm:p-12 lg:p-14 z-40 relative">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-8 lg:gap-12 pb-8 lg:pb-12">
           {/* Brand section */}
           <div className="flex flex-col space-y-4">
@@ -77,7 +77,7 @@ function HoverFooter() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
-              <span className="text-gray-900 dark:text-white text-2xl sm:text-3xl font-bold">TaskFlow</span>
+              <span className="font-lobster_two text-gray-900 dark:text-white text-2xl sm:text-3xl font-bold">TaskFlow</span>
             </div>
             <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
               Modern task management with beautiful UI/UX, dark mode, and seamless animations.

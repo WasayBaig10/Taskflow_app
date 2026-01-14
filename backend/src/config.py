@@ -5,9 +5,16 @@ Per @specs/001-auth-api-bridge/research.md
 """
 import os
 from functools import lru_cache
+from pathlib import Path
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from sqlalchemy import create_engine
 from sqlmodel import SQLModel
+
+# Load .env file with override to ensure .env takes precedence over system env vars
+# This is needed when system env vars are set with placeholder values
+env_path = Path(__file__).parent.parent / ".env"
+load_dotenv(env_path, override=True)
 
 
 class Settings(BaseSettings):
@@ -24,6 +31,14 @@ class Settings(BaseSettings):
     api_port: int = 8000
     api_host: str = "localhost"
     debug: bool = True
+
+    # Chatbot Configuration
+    # Per @specs/001-chatbot-mcp/plan.md
+    openai_api_key: str
+    neon_database_url: str  # Same as database_url but explicit for chatbot
+    mcp_server_port: int = 8000
+    openai_model: str = "gpt-4-turbo-preview"
+    mcp_server_host: str = "127.0.0.1"
 
     # Email Configuration
     email_host: str = "smtp.gmail.com"

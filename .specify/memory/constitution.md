@@ -1,13 +1,13 @@
 <!--
 Sync Impact Report:
-Version change: (none) → 1.0.0
-Modified principles: N/A (initial constitution)
-Added sections: All sections (initial constitution)
+Version change: 1.0.0 -> 1.1.0
+Modified principles: N/A (no existing principles modified)
+Added sections: VIII. AI Chatbot Architecture (new principle)
 Removed sections: N/A
 Templates requiring updates:
-  ✅ .specify/templates/plan-template.md (aligned with monorepo structure)
-  ✅ .specify/templates/spec-template.md (aligned with feature requirements)
-  ✅ .specify/templates/tasks-template.md (aligned with task organization)
+  ✅ .specify/templates/plan-template.md (aligned - Constitution Check section will apply new AI Chatbot principle)
+  ✅ .specify/templates/spec-template.md (aligned - no changes needed)
+  ✅ .specify/templates/tasks-template.md (aligned - no changes needed)
 Follow-up TODOs: None
 -->
 
@@ -99,6 +99,19 @@ All components MUST provide visibility into operation and failures:
 
 **Rationale**: Observability enables rapid debugging, performance optimization, and proactive issue detection in production.
 
+### VIII. AI Chatbot Architecture (NON-NEGOTIABLE)
+
+All AI Chatbot implementations MUST follow these core principles:
+
+- **Statelessness**: The FastAPI server MUST NOT store session data in memory. All state (conversation history, task context) MUST be retrieved from and persisted to the Neon PostgreSQL database
+- **MCP First**: All task manipulations (CRUD operations on todos) MUST go through the Official MCP SDK. The AI Agent MUST NOT call the database directly for task operations; it MUST use MCP Tools
+- **Protocol Adherence**: AI orchestration MUST use OpenAI Agents SDK for agent lifecycle and tool orchestration. Frontend UI MUST use ChatKit for chat interface components
+- **Data Isolation**: Every MCP tool call and database operation MUST include the `user_id` to maintain data isolation between users
+- **No Direct DB Access**: Agent tool implementations MUST wrap MCP SDK calls, not bypass them with direct SQLModel queries
+- **Conversation Persistence**: Chat history MUST be stored in the database with proper `user_id` scoping, not in server memory
+
+**Rationale**: Stateless architecture enables horizontal scaling, MCP SDK integration ensures consistent data access patterns, proper protocol adherence provides vendor interoperability, and user_id enforcement prevents cross-user data leakage.
+
 ## Definition of Done
 
 A feature is considered complete ONLY when ALL of the following are satisfied:
@@ -124,6 +137,8 @@ A feature is considered complete ONLY when ALL of the following are satisfied:
 - **Authentication**: Better Auth with JWT integration
 - **Validation**: Pydantic v2 for all request/response models
 - **API Documentation**: Auto-generated OpenAPI/Swagger UI
+- **AI Orchestration**: OpenAI Agents SDK for agent lifecycle management
+- **Task Operations**: Official MCP SDK for todo manipulations
 
 ### Frontend
 
@@ -132,6 +147,7 @@ A feature is considered complete ONLY when ALL of the following are satisfied:
 - **Components**: React Server Components by default
 - **TypeScript**: Strict mode enabled, no implicit any
 - **State**: Server state via Next.js data fetching, minimal client state
+- **Chat UI**: ChatKit for chat interface components
 
 ### Development
 
@@ -168,4 +184,4 @@ For development practices beyond this constitution, reference:
 
 This constitution supersedes all other practices and serves as the ultimate authority for development decisions.
 
-**Version**: 1.0.0 | **Ratified**: 2026-01-07 | **Last Amended**: 2026-01-07
+**Version**: 1.1.0 | **Ratified**: 2026-01-07 | **Last Amended**: 2026-01-11

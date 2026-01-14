@@ -39,7 +39,7 @@ class TaskService:
         ).first()
 
     @staticmethod
-    def create_task(session: Session, user_id: UUID, title: str, description: Optional[str]) -> TaskTable:
+    def create_task(session: Session, user_id: UUID, title: str, description: Optional[str], priority: str = "medium") -> TaskTable:
         """
         Create a new task for the user.
 
@@ -48,6 +48,7 @@ class TaskService:
             user_id: Owner's user ID (from JWT)
             title: Task title
             description: Optional task description
+            priority: Task priority level (low, medium, high) - defaults to medium
 
         Returns:
             Created task with user_id set
@@ -56,6 +57,7 @@ class TaskService:
             user_id=user_id,  # From verified JWT
             title=title,
             description=description,
+            priority=priority,
             completed=False,
             created_at=datetime.utcnow()
         )
@@ -107,9 +109,9 @@ class TaskService:
         return False
 
     @staticmethod
-    def update_task(session: Session, task_id: UUID, user_id: UUID, title: Optional[str] = None, description: Optional[str] = None) -> Optional[TaskTable]:
+    def update_task(session: Session, task_id: UUID, user_id: UUID, title: Optional[str] = None, description: Optional[str] = None, priority: Optional[str] = None) -> Optional[TaskTable]:
         """
-        Update a task's title and/or description if it belongs to the user.
+        Update a task's title, description, and/or priority if it belongs to the user.
 
         Args:
             session: Database session
@@ -117,6 +119,7 @@ class TaskService:
             user_id: User requesting update (for ownership verification)
             title: New title (optional)
             description: New description (optional)
+            priority: New priority level (optional)
 
         Returns:
             Updated task if found and owned by user, None otherwise
@@ -127,6 +130,8 @@ class TaskService:
                 task.title = title
             if description is not None:
                 task.description = description
+            if priority is not None:
+                task.priority = priority
             session.add(task)
             session.commit()
             session.refresh(task)

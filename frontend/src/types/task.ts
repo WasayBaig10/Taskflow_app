@@ -9,6 +9,7 @@ export interface Task {
   title: string
   description: string | null
   completed: boolean
+  priority?: "low" | "medium" | "high"
   created_at: string  // ISO 8601 datetime
   completed_at: string | null
 }
@@ -16,6 +17,7 @@ export interface Task {
 export interface TaskCreateRequest {
   title: string
   description?: string
+  priority?: "low" | "medium" | "high"
 }
 
 export interface TaskListResponse {

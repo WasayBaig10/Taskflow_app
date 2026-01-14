@@ -6,6 +6,7 @@ Per @specs/001-auth-api-bridge/contracts/pydantic-models.md
 from fastapi import APIRouter
 from pydantic import BaseModel
 from src.config import settings, engine
+from sqlalchemy import text
 
 
 class HealthResponse(BaseModel):
@@ -28,10 +29,10 @@ async def health_check():
     # Check database connection
     try:
         with engine.connect() as conn:
-            conn.execute("SELECT 1")
+            conn.execute(text("SELECT 1"))
         db_status = "connected"
-    except Exception:
-        db_status = "disconnected"
+    except Exception as e:
+        db_status = f"disconnected: {str(e)[:50]}"
 
     return HealthResponse(
         status="healthy" if db_status == "connected" else "unhealthy",

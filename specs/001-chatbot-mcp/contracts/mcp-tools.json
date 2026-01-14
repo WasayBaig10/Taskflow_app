@@ -1,0 +1,319 @@
+{
+  "mcpVersion": "1.0",
+  "serverName": "todo-mcp-server",
+  "description": "MCP server for Todo task management operations",
+  "tools": [
+    {
+      "name": "add_task",
+      "description": "Create a new todo task for a user. Use this when the user requests to create, add, or make a new task.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the user who will own the task. Must match authenticated user's ID."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Task title (short, descriptive name for the task)"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000,
+            "description": "Optional detailed description of the task"
+          }
+        },
+        "required": ["user_id", "title"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the newly created task"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the created task"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Description of the created task"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when task was created"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if task was created successfully"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true,
+            "description": "Error message if creation failed"
+          }
+        },
+        "required": ["task_id", "title", "created_at", "success"]
+      }
+    },
+    {
+      "name": "list_tasks",
+      "description": "List all tasks for a user. Use this when the user asks to see, show, or display their tasks.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the user whose tasks to list"
+          },
+          "include_completed": {
+            "type": "boolean",
+            "description": "Whether to include completed tasks (default: true)",
+            "default": true
+          }
+        },
+        "required": ["user_id"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Task ID"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Task title"
+                },
+                "description": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Task description"
+                },
+                "completed": {
+                  "type": "boolean",
+                  "description": "Task completion status"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Creation timestamp"
+                },
+                "completed_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Completion timestamp"
+                }
+              },
+              "required": ["id", "title", "completed", "created_at"]
+            },
+            "description": "List of tasks belonging to the user"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Total number of tasks"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if tasks were retrieved successfully"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true",
+            "description": "Error message if retrieval failed"
+          }
+        },
+        "required": ["tasks", "count", "success"]
+      }
+    },
+    {
+      "name": "complete_task",
+      "description": "Mark a task as completed. Use this when the user asks to complete, finish, or check off a task.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the user who owns the task"
+          },
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the task to mark as complete"
+          }
+        },
+        "required": ["user_id", "task_id"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the completed task"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the completed task"
+          },
+          "completed": {
+            "type": "boolean",
+            "description": "New completion status (should be true)"
+          },
+          "completed_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when task was marked complete"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if task was completed successfully"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true,
+            "description": "Error message if completion failed"
+          }
+        },
+        "required": ["task_id", "title", "completed", "completed_at", "success"]
+      }
+    },
+    {
+      "name": "delete_task",
+      "description": "Delete a task permanently. Use this when the user asks to delete, remove, or get rid of a task. Always confirm before deletion.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the user who owns the task"
+          },
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the task to delete"
+          }
+        },
+        "required": ["user_id", "task_id"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the deleted task"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the deleted task"
+          },
+          "deleted": {
+            "type": "boolean",
+            "description": "True if task was deleted successfully"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if deletion was successful"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true,
+            "description": "Error message if deletion failed"
+          }
+        },
+        "required": ["task_id", "title", "deleted", "success"]
+      }
+    },
+    {
+      "name": "update_task",
+      "description": "Update task title or description. Use this when the user asks to change, modify, or edit a task.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the user who owns the task"
+          },
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the task to update"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "New task title (optional)"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000,
+            "description": "New task description (optional, use empty string to clear)"
+          }
+        },
+        "required": ["user_id", "task_id"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID of the updated task"
+          },
+          "title": {
+            "type": "string",
+            "description": "Updated task title"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Updated task description"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when task was updated"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if task was updated successfully"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true,
+            "description": "Error message if update failed"
+          }
+        },
+        "required": ["task_id", "title", "updated_at", "success"]
+      }
+    }
+  ],
+  "metadata": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "tools": true,
+      "resources": false,
+      "prompts": false
+    }
+  }
+}

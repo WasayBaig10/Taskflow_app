@@ -28,7 +28,7 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      // Generate JWT token
+      // Generate JWT token from backend
       const response = await fetch(`${API_URL}/generate-token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -36,7 +36,7 @@ export default function LoginPage() {
       })
 
       if (!response.ok) {
-        throw new Error(`Invalid credentials: ${response.statusText}`)
+        throw new Error(`Login failed: ${response.statusText}`)
       }
 
       const data = await response.json()
@@ -53,7 +53,7 @@ export default function LoginPage() {
       // Redirect to dashboard
       router.push("/dashboard")
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed")
+      setError(err instanceof Error ? err.message : "Login failed. Please make sure the backend server is running.")
     } finally {
       setIsLoading(false)
     }
@@ -178,7 +178,7 @@ export default function LoginPage() {
               type="submit"
               disabled={isLoading || !email || !password}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: isLoading ? 1 : 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               {isLoading ? (
@@ -196,15 +196,15 @@ export default function LoginPage() {
           </form>
         </motion.div>
 
-        {/* Demo Notice */}
+        {/* Backend Status Notice */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="mt-6 bg-gradient-to-r from-yellow-50/80 to-amber-50/80 dark:from-yellow-900/20 dark:to-amber-900/20 backdrop-blur-sm border border-yellow-200/50 dark:border-yellow-800/50 rounded-xl p-4"
+          className="mt-6 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 dark:from-blue-900/20 dark:to-indigo-900/20 backdrop-blur-sm border border-blue-200/50 dark:border-blue-800/50 rounded-xl p-4"
         >
-          <p className="text-xs text-yellow-700 dark:text-yellow-300">
-            <strong>Demo Mode:</strong> Enter any email and password to test the application. A JWT token will be generated for you.
+          <p className="text-xs text-blue-700 dark:text-blue-300">
+            <strong>Backend Required:</strong> Make sure the backend server is running on port 8000. Run: <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded text-xs">python -m uvicorn src.main:app --reload</code>
           </p>
         </motion.div>
       </motion.div>

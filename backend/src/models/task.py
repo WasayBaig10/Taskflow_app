@@ -57,6 +57,13 @@ class TaskTable(SQLModel, table=True):
         description="Whether the task has been completed"
     )
 
+    # Priority level
+    priority: str = Field(
+        default="medium",
+        nullable=False,
+        description="Task priority level: low, medium, or high"
+    )
+
     # Timestamps
     created_at: datetime = Field(
         default_factory=datetime.utcnow,

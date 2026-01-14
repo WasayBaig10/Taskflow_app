@@ -32,6 +32,10 @@ class TaskCreateRequest(BaseModel):
         None,
         description="Task description (optional, max 5000 characters)"
     )
+    priority: str = Field(
+        default="medium",
+        description="Task priority level: low, medium, or high"
+    )
 
 
 class TaskUpdateRequest(BaseModel):
@@ -44,6 +48,10 @@ class TaskUpdateRequest(BaseModel):
         None,
         description="Task description (optional, max 5000 characters)"
     )
+    priority: Optional[str] = Field(
+        None,
+        description="Task priority level: low, medium, or high"
+    )
 
 
 class TaskResponse(BaseModel):
@@ -52,6 +60,7 @@ class TaskResponse(BaseModel):
     title: str = Field(..., description="Task title")
     description: Optional[str] = Field(None, description="Task description")
     completed: bool = Field(..., description="Task completion status")
+    priority: str = Field(..., description="Task priority level")
     created_at: str = Field(..., description="Task creation timestamp (ISO 8601)")
     completed_at: Optional[str] = Field(None, description="Task completion timestamp (ISO 8601)")
 
@@ -137,7 +146,8 @@ async def create_task(
             session=session,
             user_id=UUID(current_user),
             title=task_data.title,
-            description=task_data.description
+            description=task_data.description,
+            priority=task_data.priority
         )
 
         # Convert datetime objects to ISO 8601 strings for JSON response
@@ -146,6 +156,7 @@ async def create_task(
             title=task.title,
             description=task.description,
             completed=task.completed,
+            priority=task.priority,
             created_at=task.created_at.isoformat(),
             completed_at=task.completed_at.isoformat() if task.completed_at else None
         )
@@ -186,6 +197,7 @@ async def list_tasks(
                     title=task.title,
                     description=task.description,
                     completed=task.completed,
+                    priority=task.priority,
                     created_at=task.created_at.isoformat(),
                     completed_at=task.completed_at.isoformat() if task.completed_at else None
                 )
@@ -238,6 +250,7 @@ async def get_task(
             title=task.title,
             description=task.description,
             completed=task.completed,
+            priority=task.priority,
             created_at=task.created_at.isoformat(),
             completed_at=task.completed_at.isoformat() if task.completed_at else None
         )
@@ -290,6 +303,7 @@ async def complete_task(
             title=task.title,
             description=task.description,
             completed=task.completed,
+            priority=task.priority,
             created_at=task.created_at.isoformat(),
             completed_at=task.completed_at.isoformat() if task.completed_at else None
         )
@@ -325,10 +339,10 @@ async def update_task(
 
     with Session(engine) as session:
         # Check if at least one field is being updated
-        if task_data.title is None and task_data.description is None:
+        if task_data.title is None and task_data.description is None and task_data.priority is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="At least one field (title or description) must be provided"
+                detail="At least one field (title, description, or priority) must be provided"
             )
 
         task = TaskService.update_task(
@@ -336,7 +350,8 @@ async def update_task(
             task_id=UUID(task_id),
             user_id=UUID(current_user),
             title=task_data.title,
-            description=task_data.description
+            description=task_data.description,
+            priority=task_data.priority
         )
 
         if not task:
@@ -350,6 +365,7 @@ async def update_task(
             title=task.title,
             description=task.description,
             completed=task.completed,
+            priority=task.priority,
             created_at=task.created_at.isoformat(),
             completed_at=task.completed_at.isoformat() if task.completed_at else None
         )
