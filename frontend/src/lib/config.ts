@@ -3,13 +3,47 @@
  *
  * Uses environment variables with production fallbacks
  */
-export const config = {
-  // API URL - use environment variable or fallback based on environment
-  apiUrl: process.env.NEXT_PUBLIC_API_URL ||
-    (typeof window !== 'undefined' && window.location.hostname === 'taskflow-app-frontend-4kmp-emsultiio-mawbs-projects.vercel.app')
-      ? 'https://backend-production-7c3b.up.railway.app'
-      : 'http://localhost:8000',
 
-  // Better Auth URLs
-  betterAuthUrl: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000',
+// Helper function to get API URL based on environment
+function getApiUrl(): string {
+  // If env var is set, use it
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL
+  }
+
+  // Check if we're in production on Vercel
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname
+    if (hostname.includes('vercel.app') || hostname === 'taskflow-app-frontend-4kmp-emsultiio-mawbs-projects.vercel.app') {
+      return 'https://backend-production-7c3b.up.railway.app'
+    }
+  }
+
+  // Default to localhost
+  return 'http://localhost:8000'
+}
+
+// Helper function to get Better Auth URL
+function getBetterAuthUrl(): string {
+  if (process.env.NEXT_PUBLIC_BETTER_AUTH_URL) {
+    return process.env.NEXT_PUBLIC_BETTER_AUTH_URL
+  }
+
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname
+    if (hostname.includes('vercel.app') || hostname === 'taskflow-app-frontend-4kmp-emsultiio-mawbs-projects.vercel.app') {
+      return 'https://taskflow-app-frontend-4kmp-emsultiio-mawbs-projects.vercel.app'
+    }
+  }
+
+  return 'http://localhost:3000'
+}
+
+export const config = {
+  get apiUrl() {
+    return getApiUrl()
+  },
+  get betterAuthUrl() {
+    return getBetterAuthUrl()
+  },
 }
