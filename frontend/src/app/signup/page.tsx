@@ -14,7 +14,6 @@ import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { config } from "@/lib/config"
 
-const API_URL = config.apiUrl
 
 export default function SignupPage() {
   const router = useRouter()
@@ -44,7 +43,7 @@ export default function SignupPage() {
 
     try {
       // Generate JWT token (demo mode - in production this would create actual user)
-      const response = await fetch(`${API_URL}/generate-token`, {
+      const response = await fetch(`${config.apiUrl}/generate-token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

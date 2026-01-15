@@ -14,8 +14,6 @@ import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { config } from "@/lib/config"
 
-const API_URL = config.apiUrl
-
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")
@@ -30,7 +28,7 @@ export default function LoginPage() {
 
     try {
       // Generate JWT token from backend
-      const response = await fetch(`${API_URL}/generate-token`, {
+      const response = await fetch(`${config.apiUrl}/generate-token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

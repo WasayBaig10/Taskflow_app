@@ -6,8 +6,6 @@
 import type { Task, TaskCreateRequest, TaskListResponse, ErrorResponse } from "@/types/task"
 import { config } from "./config"
 
-const API_URL = config.apiUrl
-
 /**
  * Generic API request handler with automatic token inclusion.
  *
@@ -20,7 +18,7 @@ async function apiRequest<T>(
   options: RequestInit = {},
   token?: string
 ): Promise<T> {
-  const url = `${API_URL}${endpoint}`
+  const url = `${config.apiUrl}${endpoint}`
 
   // Build headers with JWT Bearer token
   const headers: Record<string, string> = {
@@ -45,7 +43,7 @@ async function apiRequest<T>(
   } catch (error) {
     // Network error (e.g., backend not running, CORS issue)
     if (error instanceof TypeError && error.message === "Failed to fetch") {
-      throw new Error(`Unable to connect to backend at ${API_URL}. Please ensure the backend server is running.`)
+      throw new Error(`Unable to connect to backend at ${config.apiUrl}. Please ensure the backend server is running.`)
     }
     throw error
   }

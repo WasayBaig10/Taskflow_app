@@ -14,7 +14,6 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
 import { config } from "@/lib/config"
 
-const API_URL = config.apiUrl
 
 function ResetPasswordForm() {
   const router = useRouter()
@@ -53,7 +52,7 @@ function ResetPasswordForm() {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`${API_URL}/reset-password`, {
+      const response = await fetch(`${config.apiUrl}/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

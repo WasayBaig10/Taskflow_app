@@ -14,7 +14,6 @@ import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { config } from "@/lib/config"
 
-const API_URL = config.apiUrl
 
 export default function ForgotPasswordPage() {
   const router = useRouter()
@@ -30,7 +29,7 @@ export default function ForgotPasswordPage() {
     setError(null)
 
     try {
-      const response = await fetch(`${API_URL}/forgot-password`, {
+      const response = await fetch(`${config.apiUrl}/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
