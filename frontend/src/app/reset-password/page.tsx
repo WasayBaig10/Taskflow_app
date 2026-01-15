@@ -12,8 +12,9 @@
 import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
+import { config } from "@/lib/config"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+const API_URL = config.apiUrl
 
 function ResetPasswordForm() {
   const router = useRouter()

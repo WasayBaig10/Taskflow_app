@@ -4,8 +4,9 @@
  * Per @specs/001-auth-api-bridge/research.md
  */
 import type { Task, TaskCreateRequest, TaskListResponse, ErrorResponse } from "@/types/task"
+import { config } from "./config"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+const API_URL = config.apiUrl
 
 /**
  * Generic API request handler with automatic token inclusion.

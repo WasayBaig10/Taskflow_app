@@ -8,6 +8,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { sendChatMessage, type ChatMessage, type ChatRequest } from "@/lib/api-client"
+import { config } from "@/lib/config"
 import { MessageList } from "./MessageList"
 import { ChatInput } from "./ChatInput"
 import { TypingIndicator } from "./TypingIndicator"
@@ -32,7 +33,7 @@ export function ChatContainer({ userId, token }: ChatContainerProps) {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 3000)
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/health`, {
+        const response = await fetch(`${config.apiUrl}/health`, {
           method: "GET",
           signal: controller.signal,
         })
