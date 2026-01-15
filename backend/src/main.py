@@ -40,6 +40,7 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "http://127.0.0.1:3001",
         "http://127.0.0.1:3002",
+        "https://taskflow-app-frontend-4kmp-emsultiio-mawbs-projects.vercel.app",
     ],  # Frontend URLs
     allow_credentials=True,
     allow_methods=["*"],
