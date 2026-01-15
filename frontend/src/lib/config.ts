@@ -2,6 +2,10 @@
  * Application configuration
  *
  * Uses environment variables with production fallbacks
+ *
+ * Production URLs:
+ * - Frontend: https://taskflow-app-frontend-4kmp-emsultiio-mawbs-projects.vercel.app
+ * - Backend: https://backend-production-7c3b.up.railway.app
  */
 
 // Helper function to get API URL based on environment
