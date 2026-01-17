@@ -64,6 +64,12 @@ Note: user_id is automatically provided for all tool calls. Never ask the user f
             user_id: The user's UUID for data isolation
         """
         self.user_id = user_id
+
+        # Log API key info for debugging (don't log full key)
+        key_preview = settings.openai_api_key[:10] if settings.openai_api_key else "None"
+        key_length = len(settings.openai_api_key) if settings.openai_api_key else 0
+        logger.info(f"TodoAgent initializing with OpenAI API key: {key_preview}... (length: {key_length})")
+
         self.client = OpenAI(api_key=settings.openai_api_key)
         self.model = settings.openai_model
 
