@@ -228,8 +228,19 @@ Note: user_id is automatically provided for all tool calls. Never ask the user f
                 yield "I understand. How can I help you with your tasks?"
 
         except Exception as e:
-            logger.error(f"Error processing message: {e}")
-            yield f"I encountered an error processing your request: {str(e)}"
+            error_type = type(e).__name__
+            error_msg = str(e)
+            logger.error(f"Error processing message: {error_type}: {error_msg}", exc_info=True)
+
+            # Provide more helpful error messages
+            if "Connection" in error_msg or "connect" in error_msg.lower():
+                yield "I'm having trouble connecting to my AI service. Please check if the OpenAI API key is configured correctly in Railway environment variables."
+            elif "401" in error_msg or "Unauthorized" in error_msg or "authentication" in error_msg.lower():
+                yield "My AI service credentials are invalid. Please check the OpenAI API key in Railway environment variables."
+            elif "rate" in error_msg.lower() or "limit" in error_msg.lower():
+                yield "I've reached my rate limit. Please try again in a moment."
+            else:
+                yield f"I encountered an error ({error_type}): {error_msg}"
 
     async def _execute_tool_call(self, tool_call) -> str:
         """
