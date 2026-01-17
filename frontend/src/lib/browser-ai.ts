@@ -24,7 +24,31 @@ export interface ChatResponse {
 
 // Get API key from environment or prompt user
 const getApiKey = (): string | null => {
-  return process.env.NEXT_PUBLIC_OPENAI_API_KEY || localStorage.getItem("openai_api_key") || null
+  const envKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY || null
+  const localKey = typeof window !== "undefined" ? localStorage.getItem("openai_api_key") : null
+
+  // Filter out invalid/placeholder keys
+  const isValidKey = (key: string | null): boolean => {
+    if (!key) return false
+    // Check for placeholder patterns
+    if (key.includes("place") || key.includes("placeholder") || key.includes("your-domain-restricted")) {
+      return false
+    }
+    // Must start with sk- and be reasonably long
+    return key.startsWith("sk-") && key.length > 20
+  }
+
+  // Prefer env key, fall back to localStorage
+  if (isValidKey(envKey)) return envKey
+  if (isValidKey(localKey)) return localKey
+
+  // Clear invalid localStorage key
+  if (localKey && !isValidKey(localKey) && typeof window !== "undefined") {
+    console.warn("Clearing invalid API key from localStorage")
+    localStorage.removeItem("openai_api_key")
+  }
+
+  return null
 }
 
 // System prompt for the AI assistant
