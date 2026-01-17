@@ -6,12 +6,8 @@
 
 export const config = {
   get apiUrl(): string {
-    // Use local backend for development, Railway for production
-    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-      return 'http://localhost:8000'
-    }
-    // Production URL
-    return 'https://backend-production-7c3b.up.railway.app'
+    // Use Hugging Face backend
+    return 'https://mawb-mcp-todo.hf.space'
   },
 
   get betterAuthUrl(): string {
