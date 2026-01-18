@@ -4,7 +4,6 @@ import { Navigation } from "@/components/navigation"
 import { ThemeProvider } from "@/components/theme-provider"
 import HoverFooter from "@/components/hover-footer"
 import { ToastProvider } from "@/components/toast"
-import { PWAInstallButton } from "@/components/pwa-install-button"
 import { Comfortaa, Lobster_Two, Julius_Sans_One} from "next/font/google";
 
 
@@ -68,7 +67,6 @@ export default function RootLayout({
           enableSystem
         >
           <ToastProvider>
-            <PWAInstallButton />
             <div className="min-h-screen flex flex-col font-brand ">
               <div className={`${lobster_two.variable} antialiased`}>
                 <Navigation />

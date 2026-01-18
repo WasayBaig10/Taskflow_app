@@ -8,10 +8,12 @@
  * - Profile dropdown instead of logout button
  * - Glassmorphic styling
  * - Smooth animations
+ * - PWA install button (mobile only)
  */
 import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { PWAInstallButton } from "@/components/pwa-install-button"
 import { motion, AnimatePresence } from "framer-motion"
 import { nav } from "framer-motion/client"
 
@@ -131,6 +133,7 @@ export function Navigation() {
           {/* Controls */}
           <div className="flex items-center gap-2 font-comfortaa ">
             <ThemeToggle />
+            <PWAInstallButton variant="header" />
 
             {isLoggedIn ? (
               <>
