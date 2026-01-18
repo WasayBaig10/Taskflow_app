@@ -9,7 +9,7 @@ import { Comfortaa, Lobster_Two, Julius_Sans_One} from "next/font/google";
 
 export const metadata: Metadata = {
   title: "TaskFlow - AI Task Manager",
-  description: "AI-powered task management with natural language interface",
+  description: "AI-powered task management with natural language interface. Manage tasks efficiently with AI assistance.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
