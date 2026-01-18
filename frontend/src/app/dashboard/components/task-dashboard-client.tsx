@@ -11,7 +11,7 @@
  * - Status cards for task statistics
  */
 import { useState, useEffect } from "react"
-import { createTask, listTasks, completeTask, updateTask } from "@/lib/api-client"
+import { createTask, listTasks, completeTask, updateTask, deleteTask } from "@/lib/api-client"
 import type { Task } from "@/types/task"
 import { AddTaskForm } from "./add-task-form"
 import { TaskSkeleton } from "@/components/task-skeleton"
@@ -81,18 +81,13 @@ export function TaskDashboardClient({ userId, token }: TaskDashboardClientProps)
 
   const handleDeleteTask = async (taskId: string) => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/${userId}/tasks/${taskId}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      })
+      await deleteTask(userId, taskId, token)
       setTasks((prev) => prev.filter((task) => task.id !== taskId))
       showToast("Task deleted successfully", "info")
     } catch (err) {
       console.error("Failed to delete task:", err)
-      showToast("Failed to delete task", "error")
+      const errorMsg = err instanceof Error ? err.message : "Failed to delete task"
+      showToast(errorMsg, "error")
     }
   }
 

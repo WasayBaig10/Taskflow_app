@@ -170,6 +170,23 @@ export async function updateTask(
   }, token)
 }
 
+/**
+ * Delete a task.
+ *
+ * @param userId - User ID from Better Auth session
+ * @param taskId - Task ID to delete
+ * @param token - JWT token from Better Auth session
+ */
+export async function deleteTask(
+  userId: string,
+  taskId: string,
+  token?: string
+): Promise<void> {
+  return apiRequest<void>(`/api/${userId}/tasks/${taskId}`, {
+    method: "DELETE",
+  }, token)
+}
+
 // =============================================================================
 // Chat API Client (T060)
 // Per @specs/001-chatbot-mcp/contracts/openapi.yaml
