@@ -1,5 +1,12 @@
 "use client"
 
+/**
+ * Progressive Web App install button component.
+ *
+ * Detects when PWA can be installed and shows an install button.
+ * Supports header (compact) and floating (full text) variants.
+ * Only visible on mobile/tablet devices (< lg breakpoint).
+ */
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 
