@@ -1,0 +1,46 @@
+{
+  "name": "Taskflow - AI Task Manager",
+  "short_name": "Taskflow",
+  "description": "AI-powered task management with natural language interface",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#10b981",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "tasks"],
+  "shortcuts": [
+    {
+      "name": "Add Task",
+      "short_name": "Add",
+      "description": "Create a new task",
+      "url": "/dashboard",
+      "icons": [
+        {
+          "src": "/icon.svg",
+          "sizes": "any"
+        }
+      ]
+    },
+    {
+      "name": "AI Chat",
+      "short_name": "Chat",
+      "description": "Chat with AI assistant",
+      "url": "/chat",
+      "icons": [
+        {
+          "src": "/icon.svg",
+          "sizes": "any"
+        }
+      ]
+    }
+  ]
+}

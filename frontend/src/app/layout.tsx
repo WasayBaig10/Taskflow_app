@@ -1,15 +1,41 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import "./globals.css"
 import { Navigation } from "@/components/navigation"
 import { ThemeProvider } from "@/components/theme-provider"
 import HoverFooter from "@/components/hover-footer"
 import { ToastProvider } from "@/components/toast"
+import { PWAInstallButton } from "@/components/pwa-install-button"
 import { Comfortaa, Lobster_Two, Julius_Sans_One} from "next/font/google";
 
 
 export const metadata: Metadata = {
-  title: "TaskFlow - Manage Your Tasks",
-  description: "Full-stack task management app with JWT authentication and glassmorphic design",
+  title: "TaskFlow - AI Task Manager",
+  description: "AI-powered task management with natural language interface",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "TaskFlow",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: "#10b981",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 const comfortaa = Comfortaa({
@@ -42,6 +68,7 @@ export default function RootLayout({
           enableSystem
         >
           <ToastProvider>
+            <PWAInstallButton />
             <div className="min-h-screen flex flex-col font-brand ">
               <div className={`${lobster_two.variable} antialiased`}>
                 <Navigation />
