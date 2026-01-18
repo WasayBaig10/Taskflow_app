@@ -82,6 +82,11 @@ async function apiRequest<T>(
     throw new Error(errorMessage)
   }
 
+  // Handle 204 No Content responses (DELETE endpoint)
+  if (response.status === 204) {
+    return undefined as unknown as T
+  }
+
   return response.json()
 }
 
