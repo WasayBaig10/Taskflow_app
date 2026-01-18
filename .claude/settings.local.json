@@ -25,7 +25,10 @@
       "Bash(git branch:*)",
       "Bash(git push:*)",
       "Bash(vercel login:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(git restore:*)"
     ]
   }
 }
