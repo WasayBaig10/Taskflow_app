@@ -1,11 +1,8 @@
 [build]
-  base = "frontend"
-  command = "npm run build"
-  publish = ".next"
+  base = "/"
+  command = "cd frontend && npm run build"
+  publish = "frontend/.next"
 
 [build.environment]
   NODE_VERSION = "18"
   NPM_VERSION = "9"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
