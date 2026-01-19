@@ -6,6 +6,7 @@
  * Detects when PWA can be installed and shows an install button.
  * Supports header (compact) and floating (full text) variants.
  * Only visible on mobile/tablet devices (< lg breakpoint).
+ * Hidden in standalone PWA mode using CSS media query.
  */
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
@@ -65,11 +66,15 @@ export function PWAInstallButton({ variant = "floating" }: PWAInstallButtonProps
     return null
   }
 
+  // CSS class to hide in standalone mode (PWA already installed)
+  // Uses @media (display-mode: standalone) CSS media query
+  const standaloneHideClass = "[@media(display-mode:standalone)]:hidden"
+
   if (variant === "header") {
     return (
       <motion.button
         onClick={handleInstallClick}
-        className="lg:hidden bg-priority-low hover:bg-priority-low/80 text-obsidian-950 font-medium p-2 rounded-lg shadow-neon-green transition-all duration-200"
+        className={`lg:hidden bg-priority-low hover:bg-priority-low/80 text-obsidian-950 font-medium p-2 rounded-lg shadow-neon-green transition-all duration-200 ${standaloneHideClass}`}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         aria-label="Install app"
@@ -82,7 +87,7 @@ export function PWAInstallButton({ variant = "floating" }: PWAInstallButtonProps
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 lg:hidden">
+    <div className={`fixed bottom-4 right-4 z-50 lg:hidden ${standaloneHideClass}`}>
       <button
         onClick={handleInstallClick}
         className="bg-priority-low hover:bg-priority-low/80 text-obsidian-950 font-medium py-2 px-4 rounded-lg shadow-neon-green transition-all duration-200 flex items-center gap-2"
