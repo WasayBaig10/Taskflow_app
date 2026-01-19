@@ -79,6 +79,17 @@ async function apiRequest<T>(
       // If parsing JSON fails, use status text
       errorMessage = response.statusText || errorMessage
     }
+
+    // Handle 401 Unauthorized - clear invalid token and throw special error
+    if (response.status === 401 || errorMessage.toLowerCase().includes("token")) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("auth_token")
+        localStorage.removeItem("user_id")
+        localStorage.removeItem("user_email")
+      }
+      errorMessage = "Invalid token. Please log in again."
+    }
+
     throw new Error(errorMessage)
   }
 

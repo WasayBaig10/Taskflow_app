@@ -48,6 +48,14 @@ export function TaskDashboardClient({ userId, token }: TaskDashboardClientProps)
         setTasks(response.tasks)
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : "Failed to load tasks"
+        // If token is invalid, clear storage and redirect to login
+        if (errorMsg.toLowerCase().includes("token") || errorMsg.toLowerCase().includes("401") || errorMsg.toLowerCase().includes("unauthorized")) {
+          localStorage.removeItem("auth_token")
+          localStorage.removeItem("user_id")
+          localStorage.removeItem("user_email")
+          window.location.href = "/login"
+          return
+        }
         setTasksError(errorMsg)
         showToast(errorMsg, "error")
       } finally {
